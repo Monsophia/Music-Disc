@@ -10,7 +10,6 @@ require('console-stamp')(console, { format: ':date(yyyy/mm/dd HH:MM:ss)' });
 
 const embed = require(`${__dirname}/src/embeds/embeds`);
 
-
 dotenv.config();
 const ENV = process.env;
 const color = {
@@ -18,9 +17,6 @@ const color = {
     grey: '\x1B[2m',
     green: '\x1B[32m'
 };
-
-
-
 
 let client = new Client({
     intents: [
@@ -64,7 +60,7 @@ const player = client.player;
 
 
 const setEnvironment = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         client.config.name = typeof (ENV.BOT_NAME) === 'undefined' ?
             client.config.name :
             ENV.BOT_NAME;
@@ -176,22 +172,13 @@ const loadCommands = () => {
 }
 
 
-Promise.resolve()
-    .then(() => setEnvironment())
-    .then(() => loadFramework())
-    .then(() => loadEvents())
-    .then(() => loadCommands())
-    .then(() => {
-        console.log(`${color.green}*** All loaded successfully ***${color.white}`);
-        client.login(ENV.TOKEN);
-    });
-
-
-
+Promise.resolve().then(() => setEnvironment()).then(() => loadFramework()).then(() => loadEvents()).then(() => loadCommands()).then(() => {
+    console.log(`${color.green}*** All loaded successfully ***${color.white}`);
+    client.login(ENV.TOKEN);
+});
 
 const settings = (queue, song) =>
     `**Volume**: \`${queue.volume}%\` | **Loop**: \`${queue.repeatMode ? (queue.repeatMode === 2 ? 'All' : 'ONE') : 'Off'}\``;
-
 
 player.on('error', (queue, error) => {
     console.log(`There was a problem with the song queue => ${error.message}`);
@@ -216,13 +203,12 @@ player.on('channelEmpty', (queue) => {
         queue.stop();
 });
 
-
 player.on('connectionCreate', (queue) => {
     queue.connection.voiceConnection.on('stateChange', (oldState, newState) => {
         const oldNetworking = Reflect.get(oldState, 'networking');
         const newNetworking = Reflect.get(newState, 'networking');
 
-        const networkStateChangeHandler = (oldNetworkState, newNetworkState) => {
+        const networkStateChangeHandler = (newNetworkState) => {
             const newUdp = Reflect.get(newNetworkState, 'udp');
             clearInterval(newUdp?.keepAliveInterval);
         }

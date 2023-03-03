@@ -23,6 +23,7 @@ module.exports = async (client) => {
         nodejs: `Node.js: ${color.cyan}${client.status.node_version}${color.white}`,
         djs: `Discord.js: ${color.cyan}${client.status.discord_version}${color.white}`
     }
+
     console.log(`+-----------------------+`);
     console.log(`| ${release.bot.padEnd(30, ' ')} |`);
     console.log(`| ${release.nodejs.padEnd(30, ' ')} |`);
@@ -54,7 +55,7 @@ function OSversion() {
     else if (platform === "linux")
         return new Promise(function (resolve, reject) {
             exec('cat /etc/*release | grep -E ^PRETTY_NAME',
-                (error, stdout, stderr) => {
+                (error, stdout) => {
                     if (error !== null) reject(error);
 
                     let os_version = stdout.split('"')[1];
